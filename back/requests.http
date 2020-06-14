@@ -3,3 +3,11 @@ GET http://localhost:8000/
 
 ### POST /auth/signup
 POST http://localhost:8000/auth/signup
+Content-Type: application/json
+
+{
+  "email": "mon@email.com",
+  "password": "monPassword",
+  "name": "James",
+  "lastname": "Bond"
+}
