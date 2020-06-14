@@ -1,0 +1,5 @@
+### GET test
+GET http://localhost:8000/
+
+### POST /auth/signup
+POST http://localhost:8000/auth/signup
