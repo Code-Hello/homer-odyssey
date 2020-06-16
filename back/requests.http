@@ -1,13 +1,13 @@
 ### GET test
-GET http://localhost:8000/
+GET http://localhost:5000/
 
 ### POST /auth/signup
-POST http://localhost:8000/auth/signup
+POST http://localhost:5000/auth/signup
 Content-Type: application/json
 
 {
-  "email": "mon@email.com",
-  "password": "monPassword",
-  "name": "James",
+  "email": "second@email.com",
+  "password": "monPasswordBis",
+  "name": "Jane",
   "lastname": "Bond"
 }

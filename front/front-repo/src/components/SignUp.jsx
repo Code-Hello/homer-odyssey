@@ -9,6 +9,7 @@ class SignUp extends React.Component {
       passwordbis: '',
       name: '',
       lastname: '',
+      flash: '',
     };
     this.updateField = this.updateField.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,8 +22,24 @@ class SignUp extends React.Component {
   }
 
   handleSubmit(event) {
-    console.log(this.state);
     event.preventDefault();
+    const { password, passwordbis, email, name, lastname } = this.state;
+    if (password !== passwordbis) {
+      alert("Passwords don't match");
+    } else {
+      fetch('/auth/signup', {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify({ email, password, name, lastname }),
+      })
+        .then((res) => res.json())
+        .then(
+          (res) => this.setState({ flash: res.flash }),
+          (err) => this.setState({ flash: err.flash })
+        );
+    }
   }
 
   render() {
