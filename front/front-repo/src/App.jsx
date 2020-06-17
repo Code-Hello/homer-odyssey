@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { Grid, Paper } from '@material-ui/core';
@@ -6,6 +7,8 @@ import { Grid, Paper } from '@material-ui/core';
 import './App.css';
 
 import SignUp from './components/SignUp';
+import SignIn from './components/SignIn';
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -21,7 +24,14 @@ function App() {
                 />
               </Grid>
               <Grid item xs={12} sm={6} alignContent="center">
-                <SignUp />
+                <BrowserRouter>
+                  <Switch>
+                    <Route exact path="/" component={SignIn} />
+                    <Route exact path="/signin" component={SignIn} />
+                    <Route path="/signup" component={SignUp} />
+                    <Route path="/profile" component={Profile} />
+                  </Switch>
+                </BrowserRouter>
               </Grid>
             </Grid>
           </Paper>

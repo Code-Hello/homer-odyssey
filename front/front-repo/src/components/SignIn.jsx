@@ -2,15 +2,12 @@ import React from 'react';
 import { Button, TextField, Snackbar, Grid } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
-class SignUp extends React.Component {
+class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
       password: '',
-      passwordbis: '',
-      name: '',
-      lastname: '',
       flash: '',
       open: false,
     };
@@ -27,30 +24,23 @@ class SignUp extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { password, passwordbis, email, name, lastname } = this.state;
+    const { password, email } = this.state;
     const { history } = this.props;
-    if (password !== passwordbis) {
-      alert("Passwords don't match");
-    } else {
-      fetch('/auth/signup', {
-        method: 'POST',
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-        body: JSON.stringify({ email, password, name, lastname }),
-      })
-        .then((res) => res.json())
-        .then(
-          (res) => {
-            this.setState({ flash: res.flash, open: true });
-            history.push('/profile');
-          },
-          (err) => this.setState({ flash: err.flash, open: true })
-        )
-        .catch((err) => {
-          console.log(err.message);
-        });
-    }
+    fetch('/auth/signin', {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({ email, password }),
+    })
+      .then((res) => res.json())
+      .then(
+        (res) => {
+          this.setState({ flash: res.flash, open: true });
+          history.push('/profile');
+        },
+        (err) => this.setState({ flash: err.flash, open: true })
+      );
   }
 
   handleClose() {
@@ -58,19 +48,12 @@ class SignUp extends React.Component {
   }
 
   render() {
-    const {
-      email,
-      password,
-      passwordbis,
-      name,
-      lastname,
-      flash,
-      open,
-    } = this.state;
+    const { email, password, flash, open } = this.state;
     return (
       <Grid container alignItems="center" style={{ padding: 15 }}>
         <Grid item>
-          <h2>Sign up !</h2>
+          {JSON.stringify(this.state, 1, 1)}
+          <h2>Sign In !</h2>
           <form onSubmit={this.handleSubmit}>
             <TextField
               fullWidth
@@ -90,35 +73,6 @@ class SignUp extends React.Component {
               label="Password"
               onChange={this.updateField}
               value={password}
-            />
-            <TextField
-              fullWidth
-              required
-              type="password"
-              name="passwordbis"
-              label="Password Copy"
-              onChange={this.updateField}
-              value={passwordbis}
-            />
-            <TextField
-              fullWidth
-              required
-              type="text"
-              name="name"
-              label="Name"
-              placeholder="James"
-              onChange={this.updateField}
-              value={name}
-            />
-            <TextField
-              fullWidth
-              required
-              type="text"
-              name="lastname"
-              label="Lastname"
-              placeholder="Bond"
-              onChange={this.updateField}
-              value={lastname}
             />
             <Grid
               container
@@ -146,7 +100,7 @@ class SignUp extends React.Component {
           </form>
           <Grid container item xs={12} justify="center">
             <Grid item>
-              <Link to="/signin">Go to SignIn page</Link>
+              <Link to="/signup">Go to SignUp page</Link>
             </Grid>
           </Grid>
         </Grid>
@@ -155,4 +109,4 @@ class SignUp extends React.Component {
   }
 }
 
-export default SignUp;
+export default SignIn;
