@@ -1,8 +1,10 @@
+require("dotenv").config();
 const http = require("http");
 const path = require("path");
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const passport = require("passport");
 
 const authRouter = require("./routes/auth/auth");
 
@@ -13,9 +15,17 @@ app.use(
         extended: true,
     })
 );
-app.use(express.static(__dirname + "/public"));
 
+app.use(express.static(__dirname + "/public"));
+app.use(passport.initialize());
 app.use("/auth", authRouter);
+
+app.get("/profile", passport.authenticate("jwt", { session: false }), function(
+    req,
+    res
+) {
+    res.send(req.user);
+});
 
 app.get("/", (req, res) => {
     res.send("youhou");
