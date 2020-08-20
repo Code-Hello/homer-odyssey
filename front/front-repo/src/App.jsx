@@ -6,9 +6,11 @@ import { Grid, Paper } from '@material-ui/core';
 
 import './App.css';
 
-import SignUp from './components/SignUp';
-import SignIn from './components/SignIn';
-import Profile from './components/Profile';
+import SignUp from './containers/SignUp';
+import SignIn from './containers/SignIn';
+import Profile from './containers/Profile';
+import requireNotAuth from './hoc/requireNotAuth';
+import requireAuth from './hoc/requireAuth';
 
 function App() {
   return (
@@ -26,10 +28,22 @@ function App() {
               <Grid item xs={12} sm={6} alignContent="center">
                 <BrowserRouter>
                   <Switch>
-                    <Route exact path="/" component={SignIn} />
-                    <Route exact path="/signin" component={SignIn} />
-                    <Route path="/signup" component={SignUp} />
-                    <Route path="/profile" component={Profile} />
+                    <Route exact path="/" component={requireNotAuth(SignIn)} />
+                    <Route
+                      exact
+                      path="/signin"
+                      component={requireNotAuth(SignIn)}
+                    />
+                    <Route
+                      exact
+                      path="/signup"
+                      component={requireNotAuth(SignUp)}
+                    />
+                    <Route
+                      exact
+                      path="/profile"
+                      component={requireAuth(Profile)}
+                    />
                   </Switch>
                 </BrowserRouter>
               </Grid>

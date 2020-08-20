@@ -20,6 +20,8 @@ passport.use(
             session: false,
         },
         function(email, password, done) {
+            console.log(email);
+            console.log(password);
             connection.query("SELECT * FROM users WHERE email=?", email, function(
                 err,
                 user
@@ -64,6 +66,7 @@ const validatePassword = (user, password) => {
 // );
 
 router.post("/signin", function(req, res, next) {
+    console.log(req.body);
     passport.authenticate("local", function(err, user, info) {
         if (err) {
             return next(err);
@@ -83,7 +86,8 @@ router.post("/signin", function(req, res, next) {
                 lastname: userTemp.lastname,
             };
             const token = jwt.sign(payload, secret, { expiresIn: "1h" });
-            return res.status(200).json({ payload, token });
+            console.log(token);
+            return res.status(200).json({ payload, token, flash: "User sign in !" });
             // return res.redirect("/user/" + user[0].name);
         });
     })(req, res);
@@ -98,7 +102,15 @@ router.post("/signup", function(req, res, next) {
         fields
     ) {
         if (error) res.status(500).json({ flash: error.message });
-        else res.status(200).json({ flash: "User has been signed up !" });
+        else {
+            let payload = {
+                email: user.email,
+                name: user.name,
+                lastname: user.lastname,
+            };
+            const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+            res.status(200).json({ payload, token, flash: "User has been signed up !" })
+        };
         res.end();
     });
 });

@@ -1,6 +1,9 @@
 import React from 'react';
-import { Button, TextField, Snackbar, Grid } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import { storeToken } from '../actions/authActions';
+import { Button, TextField, Snackbar, Grid } from '@material-ui/core';
 
 class SignUp extends React.Component {
   constructor(props) {
@@ -25,8 +28,8 @@ class SignUp extends React.Component {
     });
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  handleSubmit(e) {
+    e.preventDefault();
     const { password, passwordbis, email, name, lastname } = this.state;
     const { history } = this.props;
     if (password !== passwordbis) {
@@ -39,9 +42,13 @@ class SignUp extends React.Component {
         }),
         body: JSON.stringify({ email, password, name, lastname }),
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.ok) return res.json();
+          else throw new Error(res.statusText);
+        })
         .then(
           (res) => {
+            this.props.storeToken(res.token);
             this.setState({ flash: res.flash, open: true });
             history.push('/profile');
           },
@@ -155,4 +162,16 @@ class SignUp extends React.Component {
   }
 }
 
-export default SignUp;
+function mapStateToProps(state) {
+  return {
+    token: state.auth.token,
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    storeToken: (token) => dispatch(storeToken(token)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

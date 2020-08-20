@@ -1,6 +1,9 @@
 import React from 'react';
-import { Button, TextField, Snackbar, Grid } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import { storeToken } from '../actions/authActions';
+import { Button, TextField, Snackbar, Grid } from '@material-ui/core';
 
 class SignIn extends React.Component {
   constructor(props) {
@@ -22,8 +25,8 @@ class SignIn extends React.Component {
     });
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  handleSubmit(e) {
+    e.preventDefault();
     const { password, email } = this.state;
     const { history } = this.props;
     fetch('/auth/signin', {
@@ -33,14 +36,16 @@ class SignIn extends React.Component {
       }),
       body: JSON.stringify({ email, password }),
     })
-      .then((res) => res.json())
-      .then(
-        (res) => {
-          this.setState({ flash: res.flash, open: true });
-          history.push('/profile');
-        },
-        (err) => this.setState({ flash: err.flash, open: true })
-      );
+      .then((res) => {
+        if (res.ok) return res.json();
+        else throw new Error(res.statusText);
+      })
+      .then((res) => {
+        this.props.storeToken(res.token);
+        this.setState({ flash: res.flash, open: true });
+        history.push('/profile');
+      })
+      .catch((err) => this.setState({ flash: err.flash, open: true }));
   }
 
   handleClose() {
@@ -52,7 +57,6 @@ class SignIn extends React.Component {
     return (
       <Grid container alignItems="center" style={{ padding: 15 }}>
         <Grid item>
-          {JSON.stringify(this.state, 1, 1)}
           <h2>Sign In !</h2>
           <form onSubmit={this.handleSubmit}>
             <TextField
@@ -109,4 +113,16 @@ class SignIn extends React.Component {
   }
 }
 
-export default SignIn;
+function mapStateToProps(state) {
+  return {
+    token: state.auth.token,
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    storeToken: (token) => dispatch(storeToken(token)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
